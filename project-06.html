@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mom, I Have Something to Say — Emma Hu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #3a5bd9;
+    --blue-2: #6b8aff;
+    --blue-light: #e8eeff;
+    --cream: #f5f0e8;
+    --ink: #141420;
+    --ink-2: #3a3a50;
+    --ink-3: #8a8aaa;
+    --white: #ffffff;
+    --rule: rgba(20,20,32,0.1);
+    --sans: 'Inter', system-ui, sans-serif;
+    --serif: 'EB Garamond', Georgia, serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--white);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR */
+  .cursor {
+    position: fixed; width: 8px; height: 8px;
+    background: var(--blue); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.12s, width 0.2s, height 0.2s, background 0.2s;
+  }
+  .cursor.big {
+    width: 36px; height: 36px;
+    background: transparent; border: 1.5px solid var(--blue);
+  }
+
+  /* SCROLL BAR */
+  #scroll-bar {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: var(--blue); z-index: 200; width: 0%;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2.5rem;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 0.5px solid var(--rule);
+  }
+  .nav-back {
+    font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-2); text-decoration: none;
+    display: flex; align-items: center; gap: 0.4rem;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--blue); }
+  .nav-right {
+    font-size: 0.65rem; color: var(--ink-3);
+    letter-spacing: 0.06em;
+  }
+
+  /* REVEAL */
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .d1 { transition-delay: 0.1s; }
+  .d2 { transition-delay: 0.22s; }
+  .d3 { transition-delay: 0.34s; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    padding-top: 4rem;
+  }
+  .hero-left {
+    background: var(--blue);
+    display: flex; flex-direction: column;
+    justify-content: flex-end; padding: 5rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-left-bg {
+    position: absolute; inset: 0;
+    background-image: url('https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/comic-01.jpg');
+    background-size: cover; background-position: center;
+    opacity: 0.18; mix-blend-mode: luminosity;
+  }
+  .hero-eyebrow {
+    font-size: 0.65rem; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55); margin-bottom: 1.2rem;
+    position: relative; z-index: 1;
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-style: italic; font-weight: 400;
+    line-height: 1.1; color: var(--white);
+    margin-bottom: 1rem; position: relative; z-index: 1;
+  }
+  .hero-subtitle {
+    font-size: 0.8rem; color: rgba(255,255,255,0.5);
+    letter-spacing: 0.06em; position: relative; z-index: 1;
+  }
+  .hero-right {
+    background: var(--cream);
+    display: flex; flex-direction: column;
+    justify-content: center; padding: 5rem 4rem;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: var(--blue); color: var(--white);
+    font-size: 0.6rem; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 0.3rem 0.8rem; margin-bottom: 2rem;
+  }
+  .hero-desc {
+    font-family: var(--serif);
+    font-size: 1.25rem; font-style: italic;
+    color: var(--ink-2); line-height: 1.75;
+    margin-bottom: 2rem; max-width: 420px;
+  }
+  .hero-meta {
+    font-size: 0.72rem; color: var(--ink-3);
+    line-height: 1; border-top: 0.5px solid var(--rule);
+    padding-top: 1.5rem;
+  }
+  .hero-meta div { margin-bottom: 0.6rem; }
+  .hero-meta strong { color: var(--ink-2); font-weight: 500; }
+
+  /* ── MOCKUP SECTION ── */
+  .mockup-section {
+    background: #f0f0f5;
+    padding: 6rem 0 4rem;
+    overflow: hidden;
+  }
+  .mockup-label {
+    font-size: 0.65rem; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-3); text-align: center;
+    margin-bottom: 3rem;
+  }
+  .mockup-img {
+    width: 100%; height: auto; display: block;
+  }
+
+  /* ── ABOUT STRIP ── */
+  .about-strip {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    border-top: 0.5px solid var(--rule);
+    border-bottom: 0.5px solid var(--rule);
+  }
+  .about-cell {
+    padding: 3rem 3.5rem;
+    border-right: 0.5px solid var(--rule);
+  }
+  .about-cell:last-child { border-right: none; }
+  .cell-label {
+    font-size: 0.6rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 0.8rem;
+  }
+  .cell-text {
+    font-family: var(--serif); font-size: 1rem;
+    font-style: italic; color: var(--ink-2);
+    line-height: 1.75;
+  }
+
+  /* ── FLIPBOOK ── */
+  #flipbook-section {
+    background: var(--ink);
+    padding: 5rem 0 0;
+  }
+  .flipbook-header {
+    text-align: center; padding: 0 2rem 4rem;
+  }
+  .flipbook-label {
+    font-size: 0.62rem; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(255,255,255,0.4); margin-bottom: 1rem;
+  }
+  .flipbook-title {
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-style: italic; color: var(--white);
+    font-weight: 400;
+  }
+
+  /* READER */
+  #reader {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+    user-select: none;
+  }
+
+  /* spread: no gap between pages */
+  #spread {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+    /* centre-spine shadow */
+    background: #1a1a28;
+  }
+  #spread.single { grid-template-columns: 1fr; max-width: 550px; margin: 0 auto; }
+
+  #page-l, #page-r {
+    width: 100%; height: auto;
+    display: block;
+    transition: opacity 0.18s ease;
+  }
+  #page-l.fade, #page-r.fade { opacity: 0; }
+
+  /* spine shadow overlay */
+  #spread::after {
+    content: '';
+    position: absolute;
+    left: 50%; top: 0; bottom: 0;
+    width: 32px;
+    transform: translateX(-50%);
+    background: linear-gradient(to right, rgba(0,0,0,0.18) 0%, transparent 50%, rgba(0,0,0,0.18) 100%);
+    pointer-events: none;
+    z-index: 2;
+  }
+  #spread.single::after { display: none; }
+
+  /* CLICK ZONES */
+  .click-zone {
+    position: absolute; top: 0; bottom: 0;
+    width: 15%; z-index: 10;
+    display: flex; align-items: center;
+    cursor: none; opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .click-zone:hover { opacity: 1; }
+  #zone-prev { left: -8%; justify-content: flex-end; }
+  #zone-next { right: -8%; justify-content: flex-start; }
+
+  .arrow-btn {
+    width: 52px; height: 52px;
+    background: var(--white);
+    border: none; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; color: var(--ink);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .arrow-btn:hover { background: var(--blue); color: var(--white); transform: scale(1.1); }
+  .arrow-btn:disabled { opacity: 0.25; pointer-events: none; }
+
+  /* UI BAR */
+  #ui-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 0;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .ui-btn {
+    font-family: var(--sans); font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    background: rgba(255,255,255,0.08);
+    border: 0.5px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.7);
+    padding: 0.55rem 1.4rem; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .ui-btn:hover { background: var(--blue); border-color: var(--blue); color: var(--white); }
+  .ui-btn:disabled { opacity: 0.2; pointer-events: none; }
+  #page-counter {
+    font-family: var(--sans); font-size: 0.68rem;
+    letter-spacing: 0.1em; color: rgba(255,255,255,0.4);
+  }
+  #page-counter span { color: rgba(255,255,255,0.85); }
+
+  /* THUMB STRIP */
+  #thumb-strip {
+    display: flex; gap: 2px; overflow-x: auto;
+    padding: 2rem 0; scrollbar-width: none;
+    max-width: 1100px; margin: 0 auto;
+  }
+  #thumb-strip::-webkit-scrollbar { display: none; }
+  .thumb {
+    flex-shrink: 0;
+    width: 60px; aspect-ratio: 0.707;
+    object-fit: cover; cursor: pointer;
+    opacity: 0.3; transition: opacity 0.2s;
+    border: 1.5px solid transparent;
+  }
+  .thumb:hover { opacity: 0.6; }
+  .thumb.active { opacity: 1; border-color: var(--blue); }
+
+  /* KEYBOARD HINT */
+  .kb-hint {
+    text-align: center; padding: 0 0 4rem;
+    font-size: 0.6rem; letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.2);
+  }
+
+  /* ── COLOPHON ── */
+  .colophon {
+    background: var(--white);
+    padding: 5rem 12vw;
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 5rem;
+    border-top: 3px solid var(--blue);
+    align-items: start;
+  }
+  .colophon-title {
+    font-family: var(--serif); font-size: 2rem;
+    font-style: italic; color: var(--ink);
+    margin-bottom: 1.2rem; line-height: 1.2;
+  }
+  .colophon-body {
+    font-size: 0.88rem; color: var(--ink-2);
+    line-height: 1.9; margin-bottom: 0.8rem;
+  }
+  .colophon-right {}
+  .col-label {
+    font-size: 0.58rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 0.6rem;
+    margin-top: 2rem;
+  }
+  .col-label:first-child { margin-top: 0; }
+  .col-text {
+    font-size: 0.82rem; color: var(--ink-2); line-height: 1.9;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .project-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.8rem 2.5rem;
+    border-top: 0.5px solid var(--rule);
+  }
+  .project-nav a {
+    font-size: 0.65rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-2); text-decoration: none; transition: color 0.2s;
+  }
+  .project-nav a:hover { color: var(--blue); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    #hero { grid-template-columns: 1fr; }
+    .hero-left { min-height: 60vw; padding: 3rem 2rem; }
+    .about-strip { grid-template-columns: 1fr; }
+    .about-cell { border-right: none; border-bottom: 0.5px solid var(--rule); }
+    .colophon { grid-template-columns: 1fr; gap: 2rem; padding: 4rem 6vw; }
+    #zone-prev { left: -2%; }
+    #zone-next { right: -2%; }
+  }
+</style>
+<link rel="stylesheet" href="case.css"></head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div id="scroll-bar"></div>
+
+<nav>
+  <a href="index.html#archive" class="nav-back">← Back</a>
+  <span class="nav-right">Illustration Storybook · 2026</span>
+</nav>
+
+<!-- ═══════ HERO ═══════ -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-left-bg"></div>
+    <p class="hero-eyebrow reveal">Illustration Storybook</p>
+    <h1 class="hero-title reveal d1">Mom, I Have<br>Something<br>to Say.</h1>
+    <p class="hero-subtitle reveal d2">A graphic narrative in 26 pages</p>
+  </div>
+  <div class="hero-right">
+    <span class="hero-tag reveal">Personal Narrative · Print · Concept Applications</span>
+    <p class="hero-desc reveal d1">A personal story about learning to dive and finding a way back to communication. Its visual language extends into a series of product mockups for the diving community.</p>
+    <div class="hero-meta reveal d2">
+      <div><strong>For</strong> — Divers. By Divers. With Nature.</div>
+      <div><strong>Medium</strong> — Mixed media, risograph-style print</div>
+      <div><strong>Product mockups</strong> — T-shirt · Tote bag · Zip pouch · Enamel mug</div>
+    </div>
+  </div>
+</section><aside class="case-brief" aria-label="Project overview"><h2>A 26-page personal graphic narrative shaped by learning to dive in Lanzarote.</h2><dl><div><dt>Purpose</dt><dd>Exhibitions & narrative experiences</dd></div><div><dt>My contribution</dt><dd>Personal graphic narrative, mixed-media collage &amp; editorial layout.</dd></div><div><dt>Outputs & status</dt><dd>26-page comic · Duotone visual language · Product mockups<br>Graphic narrative + concept applications</dd></div></dl><p>Lanzarote · Diving experience · 2026</p></aside>
+
+<!-- ═══════ MOCKUP ═══════ -->
+<div class="mockup-section reveal">
+  <p class="mockup-label">Concept applications · Product mockups</p>
+  <img class="mockup-img" src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/mockup.png" alt="Product mockup — T-shirt, tote bag, zip pouch, enamel mug"/>
+</div>
+
+<!-- ═══════ ABOUT CELLS ═══════ -->
+<div class="about-strip">
+  <div class="about-cell reveal">
+    <p class="cell-label">The Concept</p>
+    <p class="cell-text">Inspired by moments spent in and around the ocean, this design celebrates connection, movement and quiet wonder — bringing a sense of belonging to those who dive, explore, and protect.</p>
+  </div>
+  <div class="about-cell reveal d1">
+    <p class="cell-label">The Inspiration</p>
+    <p class="cell-text">The design language grew from a personal experience learning to dive. Underwater, the only language is breath — one inhale and you rise. These gestures became the visual grammar of the work.</p>
+  </div>
+  <div class="about-cell reveal d2">
+    <p class="cell-label">The Values</p>
+    <p class="cell-text">Respect the Ocean · Build Community · Stay Curious · Act Responsibly · Dive Deeper.</p>
+  </div>
+</div>
+
+<!-- ═══════ FLIPBOOK ═══════ -->
+<div id="flipbook-section">
+  <div class="flipbook-header">
+    <p class="flipbook-label reveal">The Inspiration Behind the Design</p>
+    <h2 class="flipbook-title reveal d1">Mom, I Have Something to Say</h2>
+    <p class="reveal d2" style="font-size:0.82rem;color:rgba(255,255,255,0.45);max-width:560px;margin:1.2rem auto 0;line-height:1.8;letter-spacing:0.02em;">
+      The product series draws its visual language from this personal graphic narrative — a story written while learning to dive in Lanzarote. The cobalt blue, the organic forms, the sense of weightlessness: all born from the moment of first neutral buoyancy, sixty feet below the surface.
+    </p>
+  </div>
+
+  <div style="padding: 0 8vw; position: relative;">
+    <div id="reader">
+      <div id="spread" class="single">
+        <img id="page-l" src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/comic-01.jpg" alt="Page 1"/>
+        <img id="page-r" src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/comic-02.jpg" alt="Page 2" style="display:none"/>
+      </div>
+
+      <!-- click zones -->
+      <div class="click-zone" id="zone-prev">
+        <button class="arrow-btn" id="btn-prev" disabled>←</button>
+      </div>
+      <div class="click-zone" id="zone-next">
+        <button class="arrow-btn" id="btn-next">→</button>
+      </div>
+    </div>
+
+    <div id="ui-bar">
+      <button class="ui-btn" id="bar-prev" disabled>← Prev</button>
+      <div id="page-counter">Page <span id="pc-cur">1</span> / <span id="pc-total">26</span></div>
+      <button class="ui-btn" id="bar-next">Next →</button>
+    </div>
+
+    <div id="thumb-strip"></div>
+    <p class="kb-hint">Use ← → arrow keys to navigate</p>
+  </div>
+</div>
+
+<!-- ═══════ COLOPHON ═══════ -->
+<div class="colophon reveal">
+  <div>
+    <h3 class="colophon-title">About the Work</h3>
+    <p class="colophon-body">
+      <em>Mom, I Have Something to Say</em> began as a letter and became a comic. The work documents three things the artist finally said — to a group, to the ocean, to a stranger on a bus — and traces a quiet return to communication.
+    </p>
+    <p class="colophon-body">
+      Drawn during a trip to Lanzarote — a volcanic island surrounded by sea — where the artist obtained her Open Water scuba diving certification. The cobalt blue of the illustrations is the blue of that specific sea.
+    </p>
+  </div>
+  <div class="colophon-right">
+    <p class="col-label">Medium</p>
+    <p class="col-text">Mixed media collage · Risograph-style duotone print · Adobe InDesign</p>
+    <p class="col-label">Concept Applications</p>
+    <p class="col-text">T-shirt · Tote bag · Zip pouch · Enamel mug<br>For Divers. By Divers. With Nature.</p>
+  </div>
+</div>
+
+<div class="project-nav">
+  <a href="skywatch.html">← SkyWatch</a>
+  <a href="index.html#archive">All Projects →</a>
+</div>
+
+<script>
+// cursor
+const cur = document.getElementById('cursor');
+document.addEventListener('mousemove', e => { cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px'; });
+document.addEventListener('mousedown', () => cur.classList.add('big'));
+document.addEventListener('mouseup',   () => cur.classList.remove('big'));
+document.querySelectorAll('a,button').forEach(el => {
+  el.addEventListener('mouseenter', () => cur.classList.add('big'));
+  el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+});
+
+// scroll progress
+window.addEventListener('scroll', () => {
+  document.getElementById('scroll-bar').style.width =
+    (window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100) + '%';
+});
+
+// reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// ── FLIPBOOK ──
+const TOTAL = 26;
+// Spread list: [0] = cover single, then pairs
+const spreads = [[1, null]];
+for (let p = 2; p <= TOTAL; p += 2)
+  spreads.push([p, p+1 <= TOTAL ? p+1 : null]);
+const TOTAL_SPREADS = spreads.length;
+let cur_s = 0;
+
+const spreadEl  = document.getElementById('spread');
+const pageL     = document.getElementById('page-l');
+const pageR     = document.getElementById('page-r');
+const pcCur     = document.getElementById('pc-cur');
+const thumbs    = document.getElementById('thumb-strip');
+const btnPrev   = document.getElementById('btn-prev');
+const btnNext   = document.getElementById('btn-next');
+const barPrev   = document.getElementById('bar-prev');
+const barNext   = document.getElementById('bar-next');
+
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function goTo(idx) {
+  if (idx < 0 || idx >= TOTAL_SPREADS) return;
+  pageL.classList.add('fade');
+  pageR.classList.add('fade');
+  setTimeout(() => {
+    cur_s = idx;
+    const [lp, rp] = spreads[idx];
+    const single = rp === null;
+    spreadEl.className = single ? 'single' : '';
+    pageL.src = `https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/comic-${pad(lp)}.jpg`;
+    pageR.style.display = single ? 'none' : 'block';
+    if (!single) pageR.src = `https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/comic-${pad(rp)}.jpg`;
+    pcCur.textContent = single ? lp : `${lp}–${rp}`;
+    [btnPrev, barPrev].forEach(b => b.disabled = idx === 0);
+    [btnNext, barNext].forEach(b => b.disabled = idx === TOTAL_SPREADS - 1);
+    thumbs.querySelectorAll('.thumb').forEach((t,i) => t.classList.toggle('active', i===idx));
+    thumbs.querySelector('.thumb.active')?.scrollIntoView({block:'nearest',inline:'center'});
+    pageL.classList.remove('fade');
+    if (!single) pageR.classList.remove('fade');
+  }, 160);
+}
+
+// build thumbs
+spreads.forEach(([lp], idx) => {
+  const img = document.createElement('img');
+  img.className = 'thumb' + (idx === 0 ? ' active' : '');
+  img.src = `https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/comic-${pad(lp)}.jpg`;
+  img.alt = `Spread ${idx+1}`;
+  img.addEventListener('click', () => goTo(idx));
+  thumbs.appendChild(img);
+});
+
+btnPrev.addEventListener('click', () => goTo(cur_s - 1));
+btnNext.addEventListener('click', () => goTo(cur_s + 1));
+barPrev.addEventListener('click', () => goTo(cur_s - 1));
+barNext.addEventListener('click', () => goTo(cur_s + 1));
+
+document.addEventListener('keydown', e => {
+  const rect = document.getElementById('flipbook-section').getBoundingClientRect();
+  if (rect.top < window.innerHeight && rect.bottom > 0) {
+    if (e.key === 'ArrowRight') goTo(cur_s + 1);
+    if (e.key === 'ArrowLeft')  goTo(cur_s - 1);
+  }
+});
+</script>
+<div class="case-return"><a href="index.html#latest">← Selected work</a><a href="index.html#contact">Discuss a collaboration →</a></div></body>
+</html>
+

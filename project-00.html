@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>The Mythical Bird — Emma Hu</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Serif+SC:wght@400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:100%; height:100%; overflow:hidden; background:#0e0e0c; cursor:none; }
+
+  .cursor {
+    position:fixed; width:10px; height:10px;
+    background:rgba(255,255,255,0.85); border-radius:50%;
+    pointer-events:none; z-index:9999;
+    transform:translate(-50%,-50%); transition:transform 0.1s;
+  }
+  .cursor.clicking { transform:translate(-50%,-50%) scale(0.5); }
+
+  #scene { position:fixed; inset:0; z-index:0; }
+  .scene-bg {
+    position:absolute; inset:0;
+    background-size:cover; background-position:center;
+    opacity:0; transition:opacity 1.2s ease;
+  }
+  .scene-bg.active { opacity:1; }
+  .scene-tint {
+    position:absolute; inset:0; background:rgba(0,0,0,0);
+    transition:background 0.8s; pointer-events:none; z-index:1;
+  }
+  .scene-tint.dim { background:rgba(0,0,0,0.38); }
+
+  /* PORTRAITS */
+  #portraits {
+    position:fixed; bottom:0; left:0; right:0;
+    display:flex; justify-content:space-between; align-items:flex-end;
+    z-index:10; pointer-events:none; padding:0;
+  }
+  .portrait {
+    opacity:0; transform:translateY(24px);
+    transition:opacity 0.5s, transform 0.5s, filter 0.4s;
+    filter:brightness(0.45) saturate(0);
+    flex-shrink:0;
+  }
+  .portrait img { width:100%; height:auto; display:block; }
+  .portrait.visible { opacity:1; transform:translateY(0); }
+  .portrait.speaking { filter:brightness(1) saturate(1); }
+  .portrait.silent   { filter:brightness(0.4) saturate(0); }
+  #portrait-lin  { width:clamp(220px,28vw,430px); }
+  #portrait-mara { width:clamp(220px,28vw,430px); }
+
+  .nav-back {
+    position:fixed; top:1.4rem; left:1.8rem; z-index:200;
+    font-family:'DM Mono',monospace; font-size:0.6rem;
+    letter-spacing:0.14em; text-transform:uppercase;
+    color:rgba(255,255,255,0.35); text-decoration:none;
+    transition:color 0.2s; opacity:0;
+  }
+  .nav-back:hover { color:rgba(255,255,255,0.85); }
+
+  .chapter-label {
+    position:fixed; top:1.4rem; right:1.8rem; z-index:200;
+    font-family:'DM Mono',monospace; font-size:0.58rem;
+    letter-spacing:0.14em; color:rgba(255,255,255,0.28);
+  }
+
+  #progress {
+    position:fixed; top:1.4rem; left:50%; transform:translateX(-50%);
+    display:flex; gap:6px; z-index:200;
+  }
+  .dot { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,0.16); transition:background 0.3s; }
+  .dot.active { background:rgba(255,255,255,0.75); }
+  .dot.done   { background:rgba(168,200,176,0.5); }
+
+  /* DIALOGUE */
+  #dialogue-box {
+    position:fixed; bottom:2rem; left:50%; transform:translateX(-50%);
+    width:min(700px,88vw); z-index:100;
+    opacity:0; transition:opacity 0.4s; pointer-events:none;
+  }
+  #dialogue-box.visible { opacity:1; pointer-events:auto; }
+  .dialogue-inner {
+    background:rgba(10,10,8,0.85);
+    border:0.5px solid rgba(255,255,255,0.13);
+    backdrop-filter:blur(14px);
+    padding:1.3rem 1.8rem 1.15rem;
+  }
+  .dialogue-speaker {
+    font-family:'DM Mono',monospace; font-size:0.6rem;
+    letter-spacing:0.18em; text-transform:uppercase; margin-bottom:0.5rem;
+  }
+  .color-lin  { color:#a8c8b0; }
+  .color-mara { color:#c8b8a0; }
+  .color-log  { color:#9ab0c8; }
+  .color-sys  { color:#c8a0a0; }
+
+  .dialogue-en {
+    font-family:'EB Garamond',Georgia,serif;
+    font-size:1.1rem; line-height:1.65;
+    color:rgba(245,240,232,0.95); margin-bottom:0.3rem;
+  }
+  .dialogue-zh {
+    font-family:'Noto Serif SC',serif;
+    font-size:0.82rem; line-height:1.75;
+    color:rgba(200,195,185,0.55);
+  }
+  .dialogue-en::after {
+    content:'▋'; font-size:0.85rem; opacity:0;
+    animation:blink 1s infinite; margin-left:2px; color:rgba(255,255,255,0.28);
+  }
+  .dialogue-en.done::after { opacity:1; }
+  @keyframes blink { 0%,100%{opacity:0} 50%{opacity:1} }
+
+  .click-hint {
+    position:absolute; bottom:0.8rem; right:1.1rem;
+    font-family:'DM Mono',monospace; font-size:0.55rem;
+    letter-spacing:0.1em; color:rgba(255,255,255,0.18);
+    opacity:0; transition:opacity 0.4s;
+  }
+  .click-hint.show { opacity:1; }
+
+  /* CHOICES */
+  #choices {
+    position:fixed; bottom:2rem; left:50%; transform:translateX(-50%);
+    width:min(700px,88vw); z-index:100;
+    display:flex; flex-direction:column; gap:0.6rem;
+    opacity:0; pointer-events:none; transition:opacity 0.4s;
+  }
+  #choices.visible { opacity:1; pointer-events:auto; }
+  .choice-btn {
+    background:rgba(10,10,8,0.82);
+    border:0.5px solid rgba(255,255,255,0.16);
+    backdrop-filter:blur(12px);
+    padding:0.85rem 1.4rem; text-align:left; cursor:none;
+    transition:background 0.2s, border-color 0.2s, padding-left 0.2s;
+  }
+  .choice-btn:hover {
+    background:rgba(75,105,85,0.45);
+    border-color:rgba(168,200,176,0.48);
+    padding-left:1.9rem;
+  }
+  .choice-en {
+    font-family:'EB Garamond',Georgia,serif;
+    font-size:1.02rem; color:rgba(245,240,232,0.9); display:block;
+  }
+  .choice-zh {
+    font-family:'Noto Serif SC',serif;
+    font-size:0.76rem; color:rgba(200,195,185,0.45);
+    display:block; margin-top:0.18rem;
+  }
+  .choice-num {
+    font-family:'DM Mono',monospace; font-size:0.58rem;
+    color:#a8c8b0; margin-right:0.65rem; letter-spacing:0.08em;
+  }
+
+  /* TITLE */
+  #title-screen {
+    position:fixed; inset:0; z-index:300;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:#0e0e0c; transition:opacity 1s;
+  }
+  #title-screen.fade-out { opacity:0; pointer-events:none; }
+  .title-eyebrow {
+    font-family:'DM Mono',monospace; font-size:0.6rem;
+    letter-spacing:0.22em; text-transform:uppercase;
+    color:rgba(168,200,176,0.6); margin-bottom:1.4rem;
+  }
+  .title-main {
+    font-family:'EB Garamond',Georgia,serif;
+    font-size:clamp(2.8rem,7vw,5.5rem); font-style:italic;
+    color:rgba(245,240,232,0.95); line-height:1.05;
+    text-align:center; margin-bottom:0.4rem;
+  }
+  .title-zh {
+    font-family:'Noto Serif SC',serif;
+    font-size:clamp(1rem,2vw,1.35rem);
+    color:rgba(245,240,232,0.35); margin-bottom:0.5rem; letter-spacing:0.12em;
+  }
+  .title-sub {
+    font-family:'DM Mono',monospace; font-size:0.58rem;
+    letter-spacing:0.11em; color:rgba(245,240,232,0.2);
+    margin-bottom:3.5rem; text-align:center;
+  }
+  .title-start {
+    font-family:'DM Mono',monospace; font-size:0.66rem;
+    letter-spacing:0.2em; text-transform:uppercase;
+    color:rgba(245,240,232,0.42);
+    border:0.5px solid rgba(255,255,255,0.16);
+    padding:0.8rem 2.5rem; cursor:none; background:transparent;
+    transition:all 0.2s;
+  }
+  .title-start:hover {
+    color:rgba(245,240,232,0.9);
+    border-color:rgba(168,200,176,0.5);
+    background:rgba(75,105,85,0.2);
+  }
+
+  #fade {
+    position:fixed; inset:0; background:#0e0e0c;
+    opacity:0; pointer-events:none; z-index:250; transition:opacity 0.6s;
+  }
+  #fade.in { opacity:1; pointer-events:auto; }
+
+  /* END */
+  #end-screen {
+    position:fixed; inset:0; z-index:300;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:rgba(10,10,8,0.94);
+    opacity:0; pointer-events:none; transition:opacity 1s;
+  }
+  #end-screen.visible { opacity:1; pointer-events:auto; }
+  .end-title {
+    font-family:'EB Garamond',Georgia,serif;
+    font-size:2.2rem; font-style:italic;
+    color:rgba(245,240,232,0.85); margin-bottom:0.4rem; text-align:center;
+  }
+  .end-zh {
+    font-family:'Noto Serif SC',serif;
+    font-size:1rem; color:rgba(245,240,232,0.32);
+    margin-bottom:0.9rem; text-align:center;
+  }
+  .end-sub {
+    font-family:'DM Mono',monospace; font-size:0.58rem;
+    letter-spacing:0.11em; color:rgba(245,240,232,0.22);
+    margin-bottom:2.5rem; text-align:center; line-height:2;
+  }
+  .end-btns { display:flex; gap:1rem; }
+  .end-btn {
+    font-family:'DM Mono',monospace; font-size:0.6rem;
+    letter-spacing:0.14em; text-transform:uppercase;
+    color:rgba(245,240,232,0.4);
+    border:0.5px solid rgba(255,255,255,0.13);
+    padding:0.7rem 1.8rem; cursor:none; text-decoration:none; background:transparent;
+    transition:all 0.2s;
+  }
+  .end-btn:hover { color:rgba(245,240,232,0.9); border-color:rgba(168,200,176,0.48); }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<div id="title-screen">
+  <p class="title-eyebrow">Interactive Visual Novel · Demo</p>
+  <h1 class="title-main">The Mythical Bird</h1>
+  <p class="title-zh">神 话 鸟</p>
+  <p class="title-sub">A Science Communication Visual Novel · 科学传播互动叙事</p>
+  <button class="title-start" id="start-btn">Click to Begin · 点击开始</button>
+</div>
+
+<div id="fade"></div>
+<div id="scene"><div class="scene-tint" id="tint"></div></div>
+
+<div id="portraits">
+  <!-- ▼ 左侧：林蔚 — 替换为你的人物图片文件名 -->
+  <div class="portrait" id="portrait-lin">
+    <img src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/%E7%99%BB%E5%B1%B1_%E9%80%8F%E6%98%8E%E5%BA%95_%E6%8B%B7%E8%B4%9D.png" alt="Dr. Lin Wei"/>
+  </div>
+  <!-- ▼ 右侧：玛拉 — 替换为你的人物图片文件名 -->
+  <div class="portrait" id="portrait-mara">
+    <img src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/%E8%A7%82%E9%B8%9F%E4%BA%BA_%E6%8B%B7%E8%B4%9D.png" alt="Mara"/>
+  </div>
+</div>
+
+<a href="index.html#archive" class="nav-back" id="nav-back">← Back</a>
+<div class="chapter-label" id="chapter-label"></div>
+<div id="progress"></div>
+
+<div id="dialogue-box">
+  <div class="dialogue-inner">
+    <div class="dialogue-speaker" id="speaker"></div>
+    <div class="dialogue-en" id="dialogue-en"></div>
+    <div class="dialogue-zh" id="dialogue-zh"></div>
+    <div class="click-hint" id="click-hint">click · 点击继续</div>
+  </div>
+</div>
+
+<div id="choices"></div>
+
+<div id="end-screen">
+  <p class="end-title">To be continued...</p>
+  <p class="end-zh">未完待续</p>
+  <p class="end-sub">
+    感谢游玩 Demo · Thank you for playing the demo<br>
+    敬请期待完整版 · Full version coming soon
+  </p>
+  <div class="end-btns">
+    <button class="end-btn" id="replay-btn">Play Again · 重玩</button>
+    <a href="index.html#archive" class="end-btn">← Portfolio</a>
+  </div>
+</div>
+
+<script>
+const CHARS = {
+  log:  { label:'Field Log · 野外记录',    color:'color-log',  portrait:null   },
+  lin:  { label:'Mara · 玛拉',             color:'color-lin',  portrait:'lin'  },
+  mara: { label:'Dr. Lin Wei · 林蔚博士',  color:'color-mara', portrait:'mara' },
+  sys:  { label:'System Alert · 系统警报', color:'color-sys',  portrait:null   },
+};
+
+const story = [
+  {
+    bg:'https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/mythical-bird-scene-01.png',
+    chapter:'Ch.1  Island No.5 · 五号岛',
+    lines:[
+      { who:'log',
+        en:'Island No. 5 — a remote rocky outcrop in the Zhoushan Archipelago. One of only three confirmed breeding sites for the Chinese Crested Tern, Thalasseus bernsteini.',
+        zh:'五号岛——舟山群岛外海一处偏远礁岩。全球仅有三处已确认的中华凤头燕鸥繁殖地之一。' },
+      { who:'log',
+        en:'Current global population estimate: fewer than 50 individuals. IUCN Red List status: Critically Endangered.',
+        zh:'当前全球种群数量估计不足50只。IUCN红色名录等级：极危。' },
+      { who:'mara',
+        en:'I arrived before dawn. The colony was completely silent — no calls, no movement on the ledges. Three years of absence, and the island feels like it has forgotten them.',
+        zh:'我在黎明前抵达。种群一片寂静，岩架上没有鸣叫，没有任何活动迹象。三年的缺席，这座岛屿似乎已将它们遗忘。' },
+    ]
+  },
+  {
+    bg:'https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/mythical-bird-scene-02.png',
+    chapter:'Ch.1  Island No.5 · 五号岛',
+    lines:[
+      { who:'mara',
+        en:'After a three-year data gap with zero confirmed sightings, we feared the population had permanently abandoned this migratory corridor.',
+        zh:'经历三年的数据空白期，零次确认目击记录之后，我们开始担心种群已永久性放弃这条迁徙廊道。' },
+      { who:'lin',
+        en:'The nesting microhabitat remains structurally intact. Predator pressure is within the historical baseline. There is no ecological justification for site abandonment.',
+        zh:'巢址微生境结构完整，捕食压力处于历史基线水平以内。从生态学角度看，没有任何依据支持繁殖地弃置的结论。' },
+      { who:'mara',
+        en:'Then something else drove them away. Or someone.',
+        zh:'那说明是其他原因——或者是某个人——将它们驱离了这里。' },
+    ]
+  },
+  {
+    bg:'https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/mythical-bird-scene-03.png',
+    chapter:'Ch.2  Signal · 信号',
+    lines:[
+      { who:'sys',
+        en:'TELEMETRY ALERT — Live signal detected on monitored frequency band 401.650 MHz.',
+        zh:'遥测警报——在监控频段401.650 MHz上检测到实时信号。' },
+      { who:'lin',
+        en:'That was, until the telemetry array triggered a live ping. The receiver has intercepted a satellite transmission from ID-2046 — the last female we banded, three years ago.',
+        zh:'直到遥测阵列触发了一次实时响应。接收器截获了来自编号ID-2046的卫星传输——那是三年前我们为其佩环的最后一只雌性个体。' },
+      { who:'mara',
+        en:'She is alive. Where is the signal originating from?',
+        zh:'她还活着。信号从哪里发出的？' },
+    ]
+  },
+  {
+    bg:'https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/mythical-bird-scene-04.png',
+    chapter:'Ch.2  Anomaly · 异常',
+    lines:[
+      { who:'lin',
+        en:'Something is wrong. The telemetry data places her last known position at approximately 28.5°N — significantly outside the predicted foraging range for this season.',
+        zh:'情况不对。遥测数据显示她最后已知位置约在北纬28.5度——已大幅偏离本季节预测觅食范围。' },
+      { who:'mara',
+        en:'According to the migratory trajectory model you published last year, the population should currently be foraging in the southern coastal wetlands — not here.',
+        zh:'根据你去年发表的迁徙轨迹模型，种群此时应在南部沿海湿地觅食，而不是在这里。' },
+      { who:'lin',
+        en:'They have deviated from their established flight corridor. The displacement vector is too precise to be meteorological. Something is actively redirecting them.',
+        zh:'它们偏离了既有迁徙廊道。位移向量的精度远超气象因素能造成的范围。某种力量正在主动干预它们的路线。' },
+    ]
+  },
+  {
+    bg:'https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/mythical-bird-scene-05.png',
+    chapter:'Ch.3  The Pattern · 规律',
+    lines:[
+      { who:'lin',
+        en:'These coordinates are not random. When plotted, the data points precisely circumvent every officially patrolled marine sanctuary along the East Asian-Australasian Flyway.',
+        zh:'这些坐标并非随机分布。将数据点绘图后，它们精确地规避了东亚—澳大利西亚迁徙路线上所有受官方巡护的海洋保护区。' },
+      { who:'mara',
+        en:'That level of spatial precision requires real-time intelligence on patrol schedules and enforcement zones. This is not passive ecological displacement.',
+        zh:'如此空间精度意味着当事方掌握实时巡逻时间表和执法区域情报。这绝非被动的生态位移。' },
+      { who:'lin',
+        en:'The signal is not originating from the bird. It is being emitted from an illegal transport vessel. Someone is exploiting radar blind spots along international maritime boundaries for illicit trans-border trafficking.',
+        zh:'信号并非来自鸟本身，而是一艘非法运输船只发出的。有人正在利用国际海事边界上的雷达盲区从事跨境非法走私活动。' },
+    ]
+  },
+  {
+    bg:'https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/mythical-bird-scene-06.png',
+    chapter:'Ch.3  Decision · 决策',
+    lines:[
+      { who:'lin',
+        en:'The target vessel is tracking directly along the trafficking corridor. If we do not act now, ID-2046 — the only confirmed returnee in three years — will be permanently lost.',
+        zh:'目标船只正沿走私路线行进。如果我们现在不采取行动，ID-2046——三年来唯一确认的回归个体——将永久消失。' },
+      { who:'mara',
+        en:'We have two intervention options. Neither is without risk. What do we do?',
+        zh:'我们有两种干预方案，各有风险。我们该怎么做？' },
+    ],
+    choices:[
+      { en:'Deploy Social Attraction Systems at Island No.5 to guide ID-2046 back to the breeding site',
+        zh:'在五号岛部署社会吸引系统，引导ID-2046返回繁殖地',
+        next:6 },
+      { en:'Implement island lockdown and coordinate maritime enforcement to intercept the vessel',
+        zh:'实施岛屿封控，协调海上执法力量拦截目标船只',
+        next:7 },
+    ]
+  },
+  // Ending A
+  {
+    bg:'https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/mythical-bird-scene-07.png',
+    chapter:'Ending A · 结局A — Social Attraction',
+    lines:[
+      { who:'mara',
+        en:'Social Attraction Systems use recorded conspecific vocalisations and taxidermic decoy models to stimulate natal site fidelity. If ID-2046 responds, she may initiate a cascade effect — drawing the dispersed population back.',
+        zh:'社会吸引系统通过播放同种鸟类录音及布置标本诱鸟模型来激活出生地忠诚度。若ID-2046有所响应，她可能引发级联效应，将分散的种群重新吸引回来。' },
+      { who:'lin',
+        en:'Risk: moderate. Non-invasive and reversible, but contingent on ID-2046\'s proximity to the site and physiological stress load. The acoustic window is narrow — we have approximately six hours.',
+        zh:'风险：中等。方案无侵入性且可逆，但成功率取决于ID-2046与目标地点的距离及其生理应激水平。声学窗口期极为有限——我们大约有六小时。' },
+      { who:'log',
+        en:'Acoustic array deployed. Broadcasting breeding colony vocalisations at 85 dB SPL. Decoy models positioned on target ledge. Monitoring for approach vector from ID-2046...',
+        zh:'声学阵列已部署完毕，以85分贝声压级播放繁殖种群鸣声。诱鸟模型已在目标岩架就位。监测ID-2046的接近向量中……' },
+    ]
+  },
+  // Ending B
+  {
+    bg:'https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/mythical-bird-scene-07.png',
+    chapter:'Ending B · 结局B — Interception',
+    lines:[
+      { who:'lin',
+        en:'Physical lockdown establishes a 3km exclusion zone around the island, while maritime enforcement coordinates an interception of the vessel before it exits the territorial boundary.',
+        zh:'物理封控方案将在岛屿周围建立3公里隔离区，同时海上执法力量在目标船只驶出领海边界前实施拦截。' },
+      { who:'mara',
+        en:'Risk: high operational complexity. Requires multi-agency coordination across two jurisdictions within a compressed timeframe. But if successful, it dismantles the trafficking network entirely, not just this single incident.',
+        zh:'风险：行动复杂度高。需要在极短时间窗口内跨两个司法管辖区协调多部门行动。但若成功，将彻底摧毁整个走私网络，而非仅处置这一单次事件。' },
+      { who:'log',
+        en:'Maritime alert initiated. Coast guard notified. 3km exclusion zone established around Island No.5. All non-essential personnel evacuating. Intercept ETA: 4 hours 22 minutes.',
+        zh:'已启动海事警报，海岸警卫队已获通知，五号岛周围3公里隔离区已建立。所有非必要人员正在撤离。拦截预计抵达时间：4小时22分钟。' },
+    ]
+  },
+];
+
+// ENGINE
+let scene=0, line=0, typing=false, timer=null, started=false;
+const cur    = document.getElementById('cursor');
+const sceneEl= document.getElementById('scene');
+const tint   = document.getElementById('tint');
+const dBox   = document.getElementById('dialogue-box');
+const spkEl  = document.getElementById('speaker');
+const enEl   = document.getElementById('dialogue-en');
+const zhEl   = document.getElementById('dialogue-zh');
+const hint   = document.getElementById('click-hint');
+const choicesEl = document.getElementById('choices');
+const chapEl = document.getElementById('chapter-label');
+const fadeEl = document.getElementById('fade');
+const endEl  = document.getElementById('end-screen');
+const navBack= document.getElementById('nav-back');
+const progEl = document.getElementById('progress');
+const pLin   = document.getElementById('portrait-lin');
+const pMara  = document.getElementById('portrait-mara');
+
+document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';});
+document.addEventListener('mousedown',()=>cur.classList.add('clicking'));
+document.addEventListener('mouseup',  ()=>cur.classList.remove('clicking'));
+
+function buildDots(){
+  progEl.innerHTML='';
+  story.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='dot'+(i<scene?' done':i===scene?' active':'');
+    progEl.appendChild(d);
+  });
+}
+
+function setPortraits(who){
+  const introduced = scene>=1;
+  if(who==='lin'){
+    pLin.classList.add('visible','speaking'); pLin.classList.remove('silent');
+    if(introduced){pMara.classList.add('visible','silent');pMara.classList.remove('speaking');}
+  } else if(who==='mara'){
+    pMara.classList.add('visible','speaking'); pMara.classList.remove('silent');
+    if(introduced){pLin.classList.add('visible','silent');pLin.classList.remove('speaking');}
+  } else {
+    pLin.classList.remove('speaking');  pLin.classList.add('silent');
+    pMara.classList.remove('speaking'); pMara.classList.add('silent');
+  }
+}
+
+function loadScene(idx,instant=false){
+  scene=idx; line=0;
+  const s=story[idx];
+  buildDots();
+  chapEl.textContent=s.chapter||'';
+  sceneEl.querySelectorAll('.scene-bg').forEach(el=>{el.classList.remove('active');setTimeout(()=>el.remove(),1400);});
+  const bg=document.createElement('div');
+  bg.className='scene-bg';
+  bg.style.backgroundImage=`url('${s.bg}')`;
+  sceneEl.appendChild(bg);
+  setTimeout(()=>bg.classList.add('active'),instant?0:50);
+  tint.classList.add('dim');
+  hideChoices();
+  showLine();
+}
+
+function showLine(){
+  const s=story[scene];
+  if(line>=s.lines.length){
+    if(s.choices){dBox.classList.remove('visible');showChoices(s.choices);}
+    else if(scene+1<story.length){dBox.classList.remove('visible');setTimeout(()=>trans(scene+1),500);}
+    else{dBox.classList.remove('visible');setTimeout(()=>endEl.classList.add('visible'),900);}
+    return;
+  }
+  const l=s.lines[line];
+  const ch=CHARS[l.who]||CHARS.log;
+  spkEl.textContent=ch.label; spkEl.className='dialogue-speaker '+ch.color;
+  enEl.textContent=''; zhEl.textContent='';
+  enEl.classList.remove('done'); hint.classList.remove('show');
+  dBox.classList.add('visible');
+  setPortraits(l.who);
+  typeText(l.en,l.zh);
+}
+
+function typeText(en,zh){
+  typing=true; let i=0;
+  clearInterval(timer);
+  timer=setInterval(()=>{
+    enEl.textContent+=en[i]; i++;
+    if(i>=en.length){
+      clearInterval(timer); zhEl.textContent=zh;
+      typing=false; enEl.classList.add('done');
+      setTimeout(()=>hint.classList.add('show'),280);
+    }
+  },26);
+}
+
+function skipType(){
+  clearInterval(timer);
+  const l=story[scene].lines[line];
+  enEl.textContent=l.en; zhEl.textContent=l.zh;
+  typing=false; enEl.classList.add('done');
+  setTimeout(()=>hint.classList.add('show'),80);
+}
+
+function advance(){
+  if(!started)return;
+  if(typing){skipType();return;}
+  enEl.classList.remove('done'); hint.classList.remove('show');
+  line++; showLine();
+}
+
+function showChoices(choices){
+  choicesEl.innerHTML='';
+  choices.forEach((c,i)=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.innerHTML=`<span class="choice-num">${String(i+1).padStart(2,'0')}</span><span class="choice-en">${c.en}</span><span class="choice-zh">${c.zh}</span>`;
+    btn.addEventListener('click',()=>{hideChoices();trans(c.next);});
+    choicesEl.appendChild(btn);
+  });
+  choicesEl.classList.add('visible');
+}
+function hideChoices(){choicesEl.classList.remove('visible');choicesEl.innerHTML='';}
+
+function trans(idx){
+  fadeEl.classList.add('in');
+  setTimeout(()=>{loadScene(idx);setTimeout(()=>fadeEl.classList.remove('in'),100);},600);
+}
+
+document.addEventListener('click',e=>{
+  if(!started)return;
+  if(choicesEl.classList.contains('visible'))return;
+  if(endEl.classList.contains('visible'))return;
+  advance();
+});
+
+document.getElementById('start-btn').addEventListener('click',e=>{
+  e.stopPropagation();
+  const ts=document.getElementById('title-screen');
+  ts.classList.add('fade-out');
+  setTimeout(()=>{ts.style.display='none';started=true;navBack.style.opacity='1';loadScene(0);},1000);
+});
+
+document.getElementById('replay-btn').addEventListener('click',()=>{
+  endEl.classList.remove('visible');
+  [pLin,pMara].forEach(p=>p.classList.remove('visible','speaking','silent'));
+  scene=0;line=0;loadScene(0);
+});
+</script>
+</body>
+</html>
+

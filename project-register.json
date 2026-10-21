@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "scope": "Seven existing portfolio entries only; not a complete lifetime inventory. No private submission records are included.",
+  "projects": [
+    {
+      "id": "little-bird",
+      "title": "Hey, Little Bird, How Did You Learn To Fly?",
+      "url": "project-03.html",
+      "image": "heylittlebird.jpg",
+      "year": "2025",
+      "purpose": "connect",
+      "secondary": [
+        "explain"
+      ],
+      "themes": [
+        "birds",
+        "connection"
+      ],
+      "media": [
+        "digital",
+        "photography",
+        "ceramics",
+        "print"
+      ],
+      "short": "Turning bird-ringing fieldwork into an exhibition about one individual life.",
+      "outputs": "Exhibition · Scientific illustration · Ceramic ocarina · 56-page booklet",
+      "role": "Photography, illustration, writing & layout; exhibition developed with credited collaborators.",
+      "context": "Arts SU Exhibition & Project Space, CSM · 14 Nov–3 Dec 2025",
+      "status": "Exhibited",
+      "selected": true,
+      "assessment": "Strongest complete case: fieldwork, identifiable individual bird, multiple finished outputs, venue and credits. Lead with this project. No audience-impact metrics claimed.",
+      "source": "https://github.com/eagleyigehu/Web-Portfolio/blob/740ba93c4185c0b23bfd90bee03dd29c038e9257/project-03.html",
+      "source_commit": "740ba93c4185c0b23bfd90bee03dd29c038e9257",
+      "date_start": "2025-11-14",
+      "date_end": "2025-12-03",
+      "collaborators": [
+        "Boya Xie",
+        "Le Qian",
+        "Yu Lei",
+        "Yan Xuan",
+        "Isabella",
+        "Aisling",
+        "Angie"
+      ],
+      "recognition": [],
+      "submission_history": [],
+      "review_required": [
+        "Confirm exact dates, individual responsibilities and publication permissions before submissions."
+      ]
+    },
+    {
+      "id": "scientific-illustration",
+      "title": "Birds, observed and illustrated",
+      "url": "project-01.html",
+      "image": "scientific illustration2.png",
+      "year": "2026",
+      "purpose": "explain",
+      "secondary": [
+        "record"
+      ],
+      "themes": [
+        "birds"
+      ],
+      "media": [
+        "painting",
+        "digital"
+      ],
+      "short": "Careful visual studies of terns and a Cedar Waxwing, with details and process.",
+      "outputs": "Species illustrations · Detail studies · Process images",
+      "role": "Illustration in gouache, coloured pencil, watercolour & Adobe Photoshop.",
+      "context": "Chinese / Greater Crested Terns · Cedar Waxwing · 2026",
+      "status": "Illustration studies",
+      "selected": true,
+      "assessment": "Clear craft evidence with finished images, detail and process. Source does not establish a commissioned client or learning outcomes.",
+      "source": "https://github.com/eagleyigehu/Web-Portfolio/blob/740ba93c4185c0b23bfd90bee03dd29c038e9257/project-01.html",
+      "source_commit": "740ba93c4185c0b23bfd90bee03dd29c038e9257",
+      "date_start": null,
+      "date_end": null,
+      "collaborators": [],
+      "recognition": [],
+      "submission_history": [],
+      "review_required": [
+        "Confirm exact dates, individual responsibilities and publication permissions before submissions."
+      ]
+    },
+    {
+      "id": "diving-story",
+      "title": "Mom, I Have Something to Say",
+      "url": "project-06.html",
+      "image": "comic-01.jpg",
+      "year": "2026",
+      "purpose": "connect",
+      "secondary": [],
+      "themes": [
+        "marine",
+        "connection"
+      ],
+      "media": [
+        "painting",
+        "digital",
+        "print"
+      ],
+      "short": "A 26-page personal graphic narrative shaped by learning to dive in Lanzarote.",
+      "outputs": "26-page comic · Duotone visual language · Product mockups",
+      "role": "Personal graphic narrative, mixed-media collage & editorial layout.",
+      "context": "Lanzarote · Diving experience · 2026",
+      "status": "Graphic narrative + concept applications",
+      "selected": true,
+      "assessment": "Complete narrative with a distinctive personal point of view. Product applications are shown as mockups; production or client commission is not established.",
+      "source": "https://github.com/eagleyigehu/Web-Portfolio/blob/740ba93c4185c0b23bfd90bee03dd29c038e9257/project-06.html",
+      "source_commit": "740ba93c4185c0b23bfd90bee03dd29c038e9257",
+      "date_start": null,
+      "date_end": null,
+      "collaborators": [],
+      "recognition": [],
+      "submission_history": [],
+      "review_required": [
+        "Confirm exact dates, individual responsibilities and publication permissions before submissions."
+      ]
+    },
+    {
+      "id": "marine-observations",
+      "title": "Marine life: field & laboratory observations",
+      "url": "project-02.html",
+      "image": "2.png",
+      "year": "2026",
+      "purpose": "record",
+      "secondary": [
+        "explain"
+      ],
+      "themes": [
+        "marine"
+      ],
+      "media": [
+        "drawing",
+        "photography"
+      ],
+      "short": "Documenting marine organisms through field surveys, microscopy, specimen drawing and lab records.",
+      "outputs": "Survey sheets · Biological classification · Specimen drawings · Lab notes",
+      "role": "Student field and laboratory documentation; team sampling credited in the case study.",
+      "context": "RMIT Biology · Queenscliff Marine Station · 2026",
+      "status": "Coursework & field documentation",
+      "selected": false,
+      "assessment": "Substantive research-process evidence. Keep accessible under documentation; do not present coursework as commissioned or peer-reviewed research.",
+      "source": "https://github.com/eagleyigehu/Web-Portfolio/blob/740ba93c4185c0b23bfd90bee03dd29c038e9257/project-02.html",
+      "source_commit": "740ba93c4185c0b23bfd90bee03dd29c038e9257",
+      "date_start": null,
+      "date_end": null,
+      "collaborators": [],
+      "recognition": [],
+      "submission_history": [],
+      "review_required": [
+        "Confirm exact dates, individual responsibilities and publication permissions before submissions."
+      ]
+    },
+    {
+      "id": "skywatch",
+      "title": "SkyWatch — Floating Habitat",
+      "url": "skywatch.html",
+      "image": "5.png",
+      "year": null,
+      "purpose": "act",
+      "secondary": [
+        "explain"
+      ],
+      "themes": [
+        "birds"
+      ],
+      "media": [
+        "digital"
+      ],
+      "short": "A Web GIS prototype exploring bird migration, habitat questions and public observation workflows.",
+      "outputs": "Interactive map · Scenario controls · Sighting-entry demonstration",
+      "role": "Web GIS interface and visual communication prototype.",
+      "context": "Chinese Crested Tern · Habitat exploration",
+      "status": "Interactive prototype",
+      "selected": false,
+      "assessment": "Distinctive digital capability; keep in hero. Code uses sample sightings and illustrative scores, with no persistent database or validated suitability computation. Do not claim conservation deployment.",
+      "source": "https://github.com/eagleyigehu/Web-Portfolio/blob/740ba93c4185c0b23bfd90bee03dd29c038e9257/index2.html",
+      "source_commit": "740ba93c4185c0b23bfd90bee03dd29c038e9257",
+      "date_start": null,
+      "date_end": null,
+      "collaborators": [],
+      "recognition": [],
+      "submission_history": [],
+      "review_required": [
+        "Confirm exact dates, individual responsibilities and publication permissions before submissions.",
+        "Year not established by the source homepage."
+      ]
+    },
+    {
+      "id": "mythical-bird",
+      "title": "The Mythical Bird",
+      "url": "project-00.html",
+      "image": "4.png",
+      "year": null,
+      "purpose": "connect",
+      "secondary": [
+        "explain"
+      ],
+      "themes": [
+        "birds",
+        "connection"
+      ],
+      "media": [
+        "digital"
+      ],
+      "short": "An interactive visual-novel demo inviting audiences to investigate the disappearance of a seabird.",
+      "outputs": "Playable visual-novel demo",
+      "role": "Interactive science-communication narrative.",
+      "context": "Chinese Crested Tern · Public engagement",
+      "status": "Demo",
+      "selected": false,
+      "assessment": "Interesting participation format but explicitly unfinished. Preserve playable demo and label scope; less complete than the selected exhibition and comic.",
+      "source": "https://github.com/eagleyigehu/Web-Portfolio/blob/740ba93c4185c0b23bfd90bee03dd29c038e9257/project-00.html",
+      "source_commit": "740ba93c4185c0b23bfd90bee03dd29c038e9257",
+      "date_start": null,
+      "date_end": null,
+      "collaborators": [],
+      "recognition": [],
+      "submission_history": [],
+      "review_required": [
+        "Confirm exact dates, individual responsibilities and publication permissions before submissions.",
+        "Year not established by the source homepage."
+      ]
+    },
+    {
+      "id": "why-fantasize",
+      "title": "Why Fantasize?",
+      "url": "project-05.html",
+      "image": "6.png",
+      "year": null,
+      "purpose": "exploration",
+      "secondary": [],
+      "themes": [
+        "exploration"
+      ],
+      "media": [
+        "drawing"
+      ],
+      "short": "An illustration project from the original portfolio.",
+      "outputs": "Illustration",
+      "role": null,
+      "context": "Personal exploration",
+      "status": "Archive entry",
+      "selected": false,
+      "assessment": "Source homepage identifies an illustration project. Full 20 MB detail file could not be read through connector; purpose, dates, role and research relationship remain unverified.",
+      "source": "https://github.com/eagleyigehu/Web-Portfolio/blob/740ba93c4185c0b23bfd90bee03dd29c038e9257/project-05.html",
+      "source_commit": "740ba93c4185c0b23bfd90bee03dd29c038e9257",
+      "date_start": null,
+      "date_end": null,
+      "collaborators": [],
+      "recognition": [],
+      "submission_history": [],
+      "review_required": [
+        "Confirm exact dates, individual responsibilities and publication permissions before submissions.",
+        "Year not established by the source homepage."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scientific Illustration — Emma Hu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@300;400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a18;
+    --ink-2: #4a4840;
+    --ink-3: #8a8880;
+    --accent: #5a7a6a;
+    --rule: rgba(26,24,20,0.12);
+    --serif: 'EB Garamond', Georgia, serif;
+    --mono: 'DM Mono', monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: linear-gradient(to bottom, #9dc3cc 0%, #bbced2 20%, #dbddd7 40%, #ebe4da 60%, #edd7c8 80%, #f6cbbd 100%);
+    background-attachment: scroll;
+    background-size: 100% 500vh;
+    background-repeat: no-repeat;
+    background-color: #f6cbbd;
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 2.5rem;
+    border-bottom: 0.5px solid var(--rule);
+    background: rgba(157,195,204,0.5);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-back {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--accent); }
+  .nav-title {
+    font-family: var(--serif);
+    font-size: 1rem;
+    color: var(--ink);
+  }
+  .project-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 5rem 2.5rem 8rem;
+  }
+  .project-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .project-title {
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+  .project-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2.5rem;
+    border-top: 0.5px solid var(--rule);
+    border-bottom: 0.5px solid var(--rule);
+    padding: 1.2rem 0;
+    margin-bottom: 3rem;
+  }
+  .meta-label {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+  .meta-value {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    color: var(--ink-2);
+  }
+  .project-hero-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 3rem;
+  }
+  .project-body {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    color: var(--ink-2);
+    line-height: 1.85;
+    margin-bottom: 1.8rem;
+    max-width: 680px;
+  }
+  .project-body strong { color: var(--ink); font-weight: 500; }
+  .project-heading {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--ink);
+    margin: 3rem 0 1rem;
+    border-left: 2px solid var(--accent);
+    padding-left: 1rem;
+  }
+  .image-grid {
+    display: grid;
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  .image-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .image-grid img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .img-caption {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+    margin-top: 0.5rem;
+  }
+  .divider {
+    border: none;
+    border-top: 0.5px solid var(--rule);
+    margin: 4rem 0;
+  }
+  .project-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 0.5px solid var(--rule);
+    margin-top: 5rem;
+    padding-top: 2rem;
+  }
+  .project-nav a {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .project-nav a:hover { color: var(--accent); }
+  @media (max-width: 640px) {
+    .project-wrap { padding: 3rem 1.2rem 5rem; }
+    .image-grid.cols-2 { grid-template-columns: 1fr; }
+    .project-meta { gap: 0.8rem 1.5rem; }
+  }
+</style>
+<link rel="stylesheet" href="case.css"></head>
+<body>
+
+<nav>
+  <a href="index.html#archive" class="nav-back">← Back</a>
+  <span class="nav-title">Scientific Illustration</span>
+</nav>
+
+<div class="project-wrap"><aside class="case-brief" aria-label="Project overview"><h2>Careful visual studies of terns and a Cedar Waxwing, with details and process.</h2><dl><div><dt>Purpose</dt><dd>Scientific visualisation & learning</dd></div><div><dt>My contribution</dt><dd>Illustration in gouache, coloured pencil, watercolour &amp; Adobe Photoshop.</dd></div><div><dt>Outputs & status</dt><dd>Species illustrations · Detail studies · Process images<br>Illustration studies</dd></div></dl><p>Chinese / Greater Crested Terns · Cedar Waxwing · 2026</p></aside>
+
+  <!-- ─────────────────────────────────────
+    WORK 2 — most recent first
+  ───────────────────────────────────── -->
+
+  <p class="project-eyebrow">Scientific Illustration · 2026</p>
+  <h1 class="project-title">Chinese Crested Tern / Greater Crested Tern</h1>
+
+  <div class="project-meta">
+    <div class="meta-item">
+      <span class="meta-label">Year</span>
+      <span class="meta-value">2026</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Medium</span>
+      <span class="meta-value">Gouache, colored pencil, and Adobe Photoshop</span>
+    </div>
+  </div>
+
+  <img class="project-hero-img" src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/scientific%20illustration2.png" alt="Scientific Illustration 2"/>
+
+  <div class="image-grid">
+    <div>
+      <img src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/scientific%20illustration%202-detail.jpg" alt="Detail"/>
+      <p class="img-caption">Detail</p>
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────
+    WORK 1
+  ───────────────────────────────────── -->
+
+  <hr class="divider"/>
+
+  <p class="project-eyebrow">Scientific Illustration · 2026</p>
+  <h2 class="project-title">Cedar Waxwing</h2>
+
+  <div class="project-meta">
+    <div class="meta-item">
+      <span class="meta-label">Year</span>
+      <span class="meta-value">2026</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Medium</span>
+      <span class="meta-value">Watercolour</span>
+    </div>
+  </div>
+
+  <img class="project-hero-img" src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/scientific%20illustration%201.png" alt="Scientific Illustration 1"/>
+
+  <div class="image-grid cols-2">
+    <div>
+      <img src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/scientific%20illustration%201-detail.png" alt="Detail"/>
+      <p class="img-caption">Detail</p>
+    </div>
+    <div>
+      <img src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/scientific%20illustration%201-process.png" alt="Process"/>
+      <p class="img-caption">Process</p>
+    </div>
+  </div>
+
+
+  <!-- Bottom nav -->
+  <div class="project-nav">
+    <a href="index.html#archive">← All Projects</a>
+    <a href="project-02.html">Marine Biology Scientific Illustration →</a>
+  </div>
+
+</div>
+<div class="case-return"><a href="index.html#latest">← Selected work</a><a href="index.html#contact">Discuss a collaboration →</a></div></body>
+</html>
+

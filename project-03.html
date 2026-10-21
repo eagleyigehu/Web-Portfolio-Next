@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hey Little Bird, How Did You Learn To Fly? — Emma Hu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white: #fafaf8;
+    --ink: #1a1814;
+    --ink-2: #4a4640;
+    --ink-3: #9a9690;
+    --rule: rgba(26,24,20,0.1);
+    --serif: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--white);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR */
+  .cursor {
+    position: fixed;
+    width: 6px; height: 6px;
+    background: var(--ink);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s, width 0.2s, height 0.2s;
+  }
+  .cursor.big {
+    width: 32px; height: 32px;
+    background: transparent;
+    border: 1px solid var(--ink);
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 2.5rem;
+    mix-blend-mode: multiply;
+  }
+  .nav-back {
+    font-family: var(--mono); font-size: 0.62rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-2); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--ink); }
+  .nav-title {
+    font-family: var(--mono); font-size: 0.58rem;
+    letter-spacing: 0.1em; color: var(--ink-3);
+  }
+
+  /* SCROLL PROGRESS */
+  #scroll-bar {
+    position: fixed; top: 0; left: 0; height: 1px;
+    background: var(--ink); z-index: 200;
+    width: 0%; transition: width 0.1s linear;
+  }
+
+  /* FLIGHT LINE — vertical thread running through page */
+  .flight-line {
+    position: fixed; top: 0; bottom: 0;
+    left: 50%; width: 0.5px;
+    background: linear-gradient(to bottom, transparent, var(--rule) 10%, var(--rule) 90%, transparent);
+    z-index: 0; pointer-events: none;
+  }
+
+  /* ── SECTIONS ── */
+  section { position: relative; }
+
+  /* fade-in on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.15s; }
+  .reveal-delay-2 { transition-delay: 0.3s; }
+  .reveal-delay-3 { transition-delay: 0.45s; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    position: relative;
+  }
+  .hero-eyebrow {
+    font-family: var(--mono); font-size: 0.62rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 2rem;
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-style: italic; font-weight: 300;
+    line-height: 1.0; letter-spacing: -0.01em;
+    color: var(--ink); margin-bottom: 1rem;
+  }
+  .hero-sub {
+    font-family: var(--serif);
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    font-style: italic; color: var(--ink-3);
+    margin-bottom: 3rem;
+  }
+  .hero-meta {
+    font-family: var(--mono); font-size: 0.6rem;
+    letter-spacing: 0.12em; color: var(--ink-3);
+    line-height: 2;
+  }
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    font-family: var(--mono); font-size: 0.55rem;
+    letter-spacing: 0.16em; color: var(--ink-3);
+    display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    animation: float 2.5s infinite ease-in-out;
+  }
+  .scroll-hint::after {
+    content: ''; display: block; width: 0.5px; height: 40px;
+    background: var(--ink-3);
+    animation: grow 2.5s infinite ease-in-out;
+  }
+  @keyframes float { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-6px)} }
+  @keyframes grow  { 0%,100%{transform:scaleY(0.3)} 50%{transform:scaleY(1)} }
+
+  /* ── FULL BLEED IMAGE ── */
+  .full-bleed {
+    width: 100vw;
+    overflow: hidden; position: relative;
+    background: #f0ede8;
+  }
+  .full-bleed img {
+    width: 100%; height: auto;
+    display: block;
+  }
+  .full-bleed .caption {
+    position: absolute; bottom: 1.2rem; right: 2.5rem;
+    font-family: var(--mono); font-size: 0.58rem;
+    letter-spacing: 0.1em; color: rgba(26,24,20,0.4);
+  }
+
+  /* ── CHAPTER MARKER ── */
+  .chapter {
+    padding: 5rem 2.5rem 2rem;
+    display: flex; align-items: center; gap: 1.5rem;
+  }
+  .chapter-num {
+    font-family: var(--mono); font-size: 0.6rem;
+    letter-spacing: 0.18em; color: var(--ink-3);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+  .chapter-title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-style: italic; font-weight: 300;
+    color: var(--ink); line-height: 1.1;
+  }
+
+  /* ── TEXT + IMAGE PAIRS ── */
+  .pair {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 0;
+    border-top: 0.5px solid var(--rule);
+    align-items: start;
+  }
+  .pair.reverse { grid-template-columns: 1fr 2fr; }
+  .pair-img { overflow: hidden; background: #f5f3ef; }
+  .pair-img img { width: 100%; height: auto; display: block; }
+  .pair-text {
+    padding: 3rem 2.5rem;
+    display: flex; flex-direction: column; justify-content: center;
+    background: var(--white);
+    position: sticky; top: 4rem;
+  }
+  .pair-label {
+    font-family: var(--mono); font-size: 0.54rem;
+    letter-spacing: 0.13em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 1rem;
+  }
+  .pair-heading {
+    font-family: var(--serif);
+    font-size: clamp(1.1rem, 2vw, 1.6rem);
+    font-style: italic; font-weight: 300;
+    line-height: 1.2; color: var(--ink);
+    margin-bottom: 1rem;
+  }
+  .pair-body {
+    font-size: 0.88rem; color: var(--ink-2);
+    line-height: 1.8; max-width: 320px;
+  }
+  .pair-body + .pair-body { margin-top: 0.8rem; }
+  .pair-body em { font-style: italic; color: var(--ink); }
+
+  /* ── QUOTE ── */
+  .quote-block {
+    padding: 7rem 2.5rem;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .quote-text {
+    font-family: var(--serif);
+    font-size: clamp(1.6rem, 4vw, 3rem);
+    font-style: italic; font-weight: 300;
+    line-height: 1.3; color: var(--ink);
+    max-width: 780px;
+  }
+  .quote-attr {
+    font-family: var(--mono); font-size: 0.6rem;
+    letter-spacing: 0.12em; color: var(--ink-3);
+    margin-top: 1.5rem; display: block;
+  }
+
+  /* ── THREE-UP GRID → TWO FULL WIDTH ── */
+  .duo {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border-top: 0.5px solid var(--rule);
+  }
+  .duo-item { overflow: hidden; position: relative; }
+  .duo-item img { width: 100%; height: auto; display: block; transition: transform 0.5s ease; }
+  .duo-item:hover img { transform: scale(1.02); }
+  .duo-caption {
+    padding: 0.8rem 1.4rem;
+    font-family: var(--mono); font-size: 0.55rem;
+    letter-spacing: 0.08em; color: var(--ink-3);
+    line-height: 1.6; border-bottom: 0.5px solid var(--rule);
+  }
+
+  /* ── FULL TEXT SPREAD ── */
+  .text-spread {
+    padding: 6rem 12vw;
+    border-top: 0.5px solid var(--rule);
+    display: grid; grid-template-columns: 1fr 1.8fr; gap: 5rem;
+    align-items: start;
+  }
+  .spread-label {
+    font-family: var(--mono); font-size: 0.6rem;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-3); padding-top: 0.4rem;
+    position: sticky; top: 5rem;
+  }
+  .spread-content {}
+  .spread-heading {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-style: italic; font-weight: 300;
+    margin-bottom: 1.5rem; color: var(--ink);
+  }
+  .spread-body {
+    font-size: 1rem; color: var(--ink-2);
+    line-height: 1.9; margin-bottom: 1rem;
+  }
+
+  /* ── CREDITS ── */
+  .credits {
+    padding: 6rem 12vw;
+    border-top: 0.5px solid var(--rule);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+  }
+  .credits-heading {
+    font-family: var(--serif);
+    font-size: 1.2rem; font-style: italic;
+    color: var(--ink); margin-bottom: 1.2rem;
+  }
+  .credits-body {
+    font-family: var(--mono); font-size: 0.68rem;
+    letter-spacing: 0.04em; color: var(--ink-2);
+    line-height: 2.2;
+  }
+  .credits-body strong { color: var(--ink); font-weight: 400; }
+
+  /* ── CLOSING ── */
+  .closing {
+    display: flex; flex-direction: column;
+    align-items: center; padding: 4rem 2rem 3rem;
+    border-top: 0.5px solid var(--rule);
+    background: var(--white);
+  }
+  .closing-poster {
+    width: min(700px, 92vw);
+    margin: 0 0 2rem;
+  }
+  .closing-poster img { width: 100%; display: block; }
+  .closing-dates {
+    font-family: var(--mono); font-size: 0.62rem;
+    letter-spacing: 0.12em; color: var(--ink-3);
+    line-height: 2; margin-top: 1.5rem;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .project-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 2rem 2.5rem;
+    border-top: 0.5px solid var(--rule);
+  }
+  .project-nav a {
+    font-family: var(--mono); font-size: 0.65rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-2); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .project-nav a:hover { color: var(--ink); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .pair { grid-template-columns: 1fr; min-height: auto; }
+    .pair.reverse { direction: ltr; }
+    .trio { grid-template-columns: 1fr; }
+    .text-spread { grid-template-columns: 1fr; gap: 2rem; padding: 4rem 6vw; }
+    .spread-label { position: static; }
+    .credits { grid-template-columns: 1fr; gap: 2rem; padding: 4rem 6vw; }
+    nav { padding: 1rem 1.2rem; }
+  }
+  /* ── FLIPBOOK ── */
+  #flipbook-wrap {
+    background: #f0ede8;
+    padding: 3rem 0 4rem;
+    border-top: 0.5px solid var(--rule);
+  }
+  #flipbook {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  /* spread: two pages side by side */
+  #flipbook-pages {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    background: #d8d4ce;
+    box-shadow: 0 4px 40px rgba(0,0,0,0.14);
+  }
+  /* single page (cover) */
+  #flipbook-pages.single {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  #page-img-l, #page-img-r {
+    width: 100%; height: auto; display: block;
+    transition: opacity 0.2s ease;
+    background: #fff;
+  }
+  #page-img-l.fade, #page-img-r.fade { opacity: 0; }
+
+  #flipbook-ui {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0 0.8rem;
+  }
+  #flipbook-ui button {
+    font-family: var(--mono); font-size: 0.9rem;
+    background: none; border: 0.5px solid var(--rule);
+    color: var(--ink-2); padding: 0.5rem 1.2rem;
+    cursor: pointer; transition: all 0.2s;
+  }
+  #flipbook-ui button:hover {
+    background: var(--ink); color: #fff; border-color: var(--ink);
+  }
+  #flipbook-ui button:disabled { opacity: 0.25; cursor: default; }
+  #page-info {
+    font-family: var(--mono); font-size: 0.62rem;
+    letter-spacing: 0.1em; color: var(--ink-3);
+  }
+  #flipbook-thumb-strip {
+    display: flex; gap: 4px; flex-wrap: wrap;
+    padding-top: 0.8rem; border-top: 0.5px solid var(--rule);
+  }
+  .thumb {
+    width: calc((100% - 4px*9) / 10);
+    aspect-ratio: 0.707; object-fit: cover;
+    cursor: pointer; opacity: 0.45; transition: opacity 0.2s;
+    border: 1.5px solid transparent;
+  }
+  .thumb:hover { opacity: 0.8; }
+  .thumb.active { opacity: 1; border-color: var(--ink); }
+
+</style>
+<link rel="stylesheet" href="case.css"></head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div id="scroll-bar"></div>
+<div class="flight-line"></div>
+
+<nav>
+  <a href="index.html#archive" class="nav-back">← Back</a>
+  <span class="nav-title">Hey Little Bird · Solo Exhibition · 2025</span>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section id="hero">
+  <p class="hero-eyebrow reveal">Bio-inspired · Solo Science Outreach Exhibition</p>
+  <h1 class="hero-title reveal reveal-delay-1">Hey, Little Bird,<br>How Did You<br>Learn To Fly?</h1>
+  <p class="hero-sub reveal reveal-delay-2">Following one bird through its entire life.</p>
+  <div class="hero-meta reveal reveal-delay-3">
+    Arts SU Exhibition & Project Space, CSM<br>
+    Granary Square, N1C 4AA · Nov 14 – Dec 3, 2025
+  </div>
+  <div class="scroll-hint">scroll</div>
+</section><aside class="case-brief" aria-label="Project overview"><h2>Turning bird-ringing fieldwork into an exhibition about one individual life.</h2><dl><div><dt>Purpose</dt><dd>Exhibitions & narrative experiences</dd></div><div><dt>My contribution</dt><dd>Photography, illustration, writing &amp; layout; exhibition developed with credited collaborators.</dd></div><div><dt>Outputs & status</dt><dd>Exhibition · Scientific illustration · Ceramic ocarina · 56-page booklet<br>Exhibited</dd></div></dl><p>Arts SU Exhibition &amp; Project Space, CSM · 14 Nov–3 Dec 2025</p></aside>
+
+<!-- ═══════════ FULL BLEED 1: Exhibition Overview ═══════════ -->
+<div class="full-bleed reveal">
+  <img src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/heylittlebird.jpg" alt="Exhibition overview — Bio-inspired"/>
+  <span class="caption">Exhibition overview · Bio-inspired</span>
+</div>
+
+<!-- ═══════════ CH.1: The Bird ═══════════ -->
+<div class="chapter reveal">
+  <span class="chapter-num">01</span>
+  <h2 class="chapter-title">The Bird</h2>
+</div>
+
+<div class="pair reveal">
+  <div class="pair-img">
+    <img src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/heylittlebird2.jpg" alt="Individual C50-7665"/>
+  </div>
+  <div class="pair-text">
+    <p class="pair-label">Individual C50-7665</p>
+    <h3 class="pair-heading">A Migratory Life,<br>Measured in Rings</h3>
+    <p class="pair-body">
+      Seven White-faced Plovers (<em>Charadrius alexandrinus dealbatus</em>) were released. Each ring number permanently identifies one bird — enabling researchers to trace its route, lifespan, and recapture history across borders.
+    </p>
+    <p class="pair-body">
+      The ocarina modelled after <em>Individual C50-7665 (BM/YR)</em> carries a physical replica of its unique leg rings — giving voice to a specific set of research coordinates, and a singular life.
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════ QUOTE 1 ═══════════ -->
+<div class="quote-block reveal">
+  <div>
+    <p class="quote-text">"Not merely as a data point in a national ringing centre, but as a singular life with a unique history."</p>
+    <span class="quote-attr">— Exhibition Statement</span>
+  </div>
+</div>
+
+<!-- ═══════════ CH.2: The Field ═══════════ -->
+<div class="chapter reveal">
+  <span class="chapter-num">02</span>
+  <h2 class="chapter-title">The Field</h2>
+</div>
+
+<div class="pair reveal">
+  <div class="pair-img">
+    <img src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/heylittlebird6.jpg" alt="Bird Banding and Data"/>
+  </div>
+  <div class="pair-text">
+    <p class="pair-label">Bird Banding & Data · 2025</p>
+    <h3 class="pair-heading">The First Bird<br>I Ever Handled</h3>
+    <p class="pair-body">
+      One month of field ringing work — observing, recording, and learning to read individual birds. This direct encounter became the starting point for everything in the exhibition.
+    </p>
+    <p class="pair-body">
+      Each bird looks slightly different up close. Some have "smoky eye" sockets; others have bright, forgiving eyes that seem to regard the whole world with patience.
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════ CH.3: The Science ═══════════ -->
+<div class="chapter reveal">
+  <span class="chapter-num">03</span>
+  <h2 class="chapter-title">The Science</h2>
+</div>
+
+<div class="pair reveal">
+  <div class="pair-img">
+    <img src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/heylittlebird3.jpg" alt="White-faced Plovers Incubating Eggs"/>
+  </div>
+  <div class="pair-text">
+    <p class="pair-label">Scientific Illustration · Charadrius alexandrinus · 26.06.2025</p>
+    <h3 class="pair-heading">White-faced Plovers<br>Incubating Eggs...</h3>
+    <p class="pair-body">
+      Annotated scientific plates document incubation behaviour and key morphological features — white forehead, lateral breast patches, densely patterned crown — to help the public identify this species in the field.
+    </p>
+    <p class="pair-body" style="margin-top:1rem;font-size:0.82rem;font-family:var(--mono);letter-spacing:0.05em;color:var(--ink-3);">
+      Medium: Digital illustration · Ceramic (Stoneware) · Exhibition booklet (Print)
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════ FULL BLEED 2 ═══════════ -->
+<div class="full-bleed reveal">
+  <img src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/heylittlebird4.jpg" alt="Booklet reading"/>
+  <span class="caption">Artist-led Interpretation · Inside Spread</span>
+</div>
+
+<!-- ═══════════ CH.4 BOOKLET READER ═══════════ -->
+<div class="chapter reveal">
+  <span class="chapter-num">04</span>
+  <h2 class="chapter-title">The Booklet</h2>
+</div>
+
+<div class="text-spread reveal" style="padding-bottom:2rem;">
+  <div class="spread-label">Field Notes from<br>A Tropical Island</div>
+  <div class="spread-content">
+    <h3 class="spread-heading">56 pages. One bird's life, start to finish.</h3>
+    <p class="spread-body">
+      Designed as a handheld companion to the ceramic sculptures, the booklet translates one month of field ringing data — egg flotation tests, banding records, individual observations — into an accessible visual narrative. Flip through all 56 pages below.
+    </p>
+  </div>
+</div>
+
+<!-- FLIPBOOK -->
+<div id="flipbook-wrap" class="reveal">
+  <div id="flipbook">
+    <div id="flipbook-pages" class="single">
+      <img id="page-img-l" src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/pages-01.jpg" alt="Booklet page"/>
+      <img id="page-img-r" src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/pages-02.jpg" alt="Booklet page" style="display:none"/>
+    </div>
+    <div id="flipbook-ui">
+      <button id="btn-prev" aria-label="Previous page">←</button>
+      <div id="page-info">
+        <span id="page-current">1</span>
+        <span style="opacity:0.35"> / </span>
+        <span id="page-total">56</span>
+      </div>
+      <button id="btn-next" aria-label="Next page">→</button>
+    </div>
+    <div id="flipbook-thumb-strip"></div>
+  </div>
+</div>
+
+<!-- ═══════════ CH.4: The Exhibition ═══════════ -->
+<div class="chapter reveal">
+  <span class="chapter-num">04</span>
+  <h2 class="chapter-title">The Exhibition</h2>
+</div>
+
+<div class="duo reveal">
+  <div class="duo-item">
+    <img src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/heylittlebird5.jpg" alt="Knowledge Translation and Public Engagement"/>
+    <div class="duo-caption">Knowledge Translation & Public Engagement · Ocarina User Guide · Audience Interaction</div>
+  </div>
+  <div class="duo-item">
+    <img src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/heylittlebird7.jpg" alt="Field work team and curation team"/>
+    <div class="duo-caption">Collaborative Realization · From Field to Gallery · Field work team · Curation team</div>
+  </div>
+</div>
+
+<!-- ═══════════ CREDITS ═══════════ -->
+<div class="credits reveal">
+  <div>
+    <h3 class="credits-heading">Bird Ringing Group Members</h3>
+    <p class="credits-body">
+      <strong>解博雅 Boya Xie</strong> — Team Leader<br>
+      千乐 Le Qian<br>
+      雷语 Yu Lei<br>
+      宣言 Yan Xuan
+    </p>
+    <br>
+    <h3 class="credits-heading">Organisation</h3>
+    <p class="credits-body">
+      Layout Assistance: <strong>Isabella</strong><br>
+      Exhibition Organisation & Curation: <strong>Aisling, Angie</strong><br>
+      Arts Students' Union, CSM
+    </p>
+  </div>
+  <div>
+    <h3 class="credits-heading">Photography, Illustration,<br>Writing & Layout</h3>
+    <p class="credits-body">
+      <strong>胡逸格 Yige Hu (Emma)</strong>
+    </p>
+    <br>
+    <h3 class="credits-heading">Medium</h3>
+    <p class="credits-body">
+      Digital Illustration<br>
+      Ceramic (Stoneware)<br>
+      Exhibition Booklet (Print)<br>
+      Ceramic Ocarina (Playable)
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════ CLOSING ═══════════ -->
+<div class="closing reveal">
+  <div class="closing-poster">
+    <img src="https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/heylittlebird8.jpg" alt="Exhibition poster — Hey Little Bird"/>
+  </div>
+  <div class="closing-dates">
+    Private View: Thursday 13th November, 5pm – 7pm<br>
+    Exhibition: 14th November – 3rd December 2025<br>
+    Arts SU Exhibition & Project Space, CSM, Granary Square, N1C 4AA<br>
+    Fieldwork → Data → Ceramic
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="project-nav">
+  <a href="project-02.html">← Marine Biology</a>
+  <a href="project-00.html">The Mythical Bird →</a>
+</div>
+
+<script>
+// cursor
+const cur = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top  = e.clientY + 'px';
+});
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => cur.classList.add('big'));
+  el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+});
+
+// scroll progress bar
+const bar = document.getElementById('scroll-bar');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  bar.style.width = pct + '%';
+});
+
+// reveal on scroll
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.1 });
+reveals.forEach(el => observer.observe(el));
+
+// subtle parallax on full-bleed images
+document.querySelectorAll('.full-bleed img').forEach(img => {
+  window.addEventListener('scroll', () => {
+    const rect = img.parentElement.getBoundingClientRect();
+    const pct  = -rect.top / window.innerHeight;
+    img.style.transform = `scale(1.06) translateY(${pct * 30}px)`;
+  }, { passive: true });
+});
+// ── FLIPBOOK (2-page spread) ──
+// Page 1 = cover (single). Pages 2-56 shown as left+right pairs.
+// Spread index: 0 = cover(p1), 1 = p2+p3, 2 = p4+p5 … 27 = p54+p55, 28 = p56(single)
+const TOTAL_PAGES = 56;
+const pagesContainer = document.getElementById('flipbook-pages');
+const imgL      = document.getElementById('page-img-l');
+const imgR      = document.getElementById('page-img-r');
+const pageCur   = document.getElementById('page-current');
+const btnPrev   = document.getElementById('btn-prev');
+const btnNext   = document.getElementById('btn-next');
+const thumbStrip= document.getElementById('flipbook-thumb-strip');
+
+// Build spread list: each entry = [leftPage, rightPage|null]
+const spreads = [[1, null]]; // cover
+for (let p = 2; p <= TOTAL_PAGES; p += 2) {
+  spreads.push([p, p + 1 <= TOTAL_PAGES ? p + 1 : null]);
+}
+const TOTAL_SPREADS = spreads.length;
+let currentSpread = 0;
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function goTo(idx) {
+  if (idx < 0 || idx >= TOTAL_SPREADS) return;
+  imgL.classList.add('fade');
+  imgR.classList.add('fade');
+  setTimeout(() => {
+    currentSpread = idx;
+    const [lp, rp] = spreads[idx];
+    const isSingle = rp === null;
+
+    pagesContainer.className = isSingle ? 'single' : '';
+    imgL.src = `https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/pages-${pad(lp)}.jpg`;
+    imgL.alt = `Page ${lp}`;
+
+    if (!isSingle) {
+      imgR.style.display = 'block';
+      imgR.src = `https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/pages-${pad(rp)}.jpg`;
+      imgR.alt = `Page ${rp}`;
+      pageCur.textContent = `${lp}–${rp}`;
+    } else {
+      imgR.style.display = 'none';
+      pageCur.textContent = `${lp}`;
+    }
+
+    btnPrev.disabled = idx === 0;
+    btnNext.disabled = idx === TOTAL_SPREADS - 1;
+
+    // update thumb highlights
+    thumbStrip.querySelectorAll('.thumb').forEach((t, i) => {
+      t.classList.toggle('active', i === idx);
+    });
+    const active = thumbStrip.querySelector('.thumb.active');
+    if (active) active.scrollIntoView({ block:'nearest', inline:'nearest' });
+
+    imgL.classList.remove('fade');
+    if (!isSingle) imgR.classList.remove('fade');
+  }, 180);
+}
+
+// Build thumbnails (one per spread, showing left page)
+spreads.forEach(([lp], idx) => {
+  const img = document.createElement('img');
+  img.className = 'thumb' + (idx === 0 ? ' active' : '');
+  img.src = `https://raw.githubusercontent.com/eagleyigehu/Web-Portfolio/740ba93c4185c0b23bfd90bee03dd29c038e9257/pages-${pad(lp)}.jpg`;
+  img.alt = `Spread ${idx + 1}`;
+  img.addEventListener('click', () => goTo(idx));
+  thumbStrip.appendChild(img);
+});
+
+btnPrev.addEventListener('click', () => goTo(currentSpread - 1));
+btnNext.addEventListener('click', () => goTo(currentSpread + 1));
+btnPrev.disabled = true;
+
+document.addEventListener('keydown', e => {
+  const rect = document.getElementById('flipbook-wrap').getBoundingClientRect();
+  if (rect.top < window.innerHeight && rect.bottom > 0) {
+    if (e.key === 'ArrowRight') goTo(currentSpread + 1);
+    if (e.key === 'ArrowLeft')  goTo(currentSpread - 1);
+  }
+});
+</script>
+<div class="case-return"><a href="index.html#latest">← Selected work</a><a href="index.html#contact">Discuss a collaboration →</a></div></body>
+</html>
+
