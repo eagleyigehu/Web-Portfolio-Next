@@ -59,13 +59,3 @@
 @media(max-width:500px) { .nav-links { display:flex;gap:.8rem; } .nav-links .optional-nav { display:none; } .nav-name { font-size:.85rem; } .hero { padding-top:7rem; } .hero-title { font-size:3.6rem; } .hero-desc { font-size:1.05rem; } .purpose-grid { grid-template-columns:1fr; } .archive-tools { gap:.7rem; } .archive-tools label:first-child { grid-column:1/-1; } .archive-card h3 { font-size:1.15rem; } .section-intro h2 { font-size:1.9rem; } }
 @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { animation:none!important;transition:none!important; } }
 
-/* Shop & Editions — deliberately light; ready for a verified Etsy storefront link. */
-#shop .shop-panel{display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:2rem;border:1px solid var(--border, #deddd7);background:var(--paper, #f8f6f0)}
-#shop .shop-copy{max-width:600px}
-#shop .shop-copy h3{font-size:1.6rem;font-weight:400;margin:.5rem 0 1rem}
-#shop .shop-copy p:last-child{max-width:520px;color:var(--ink-2);line-height:1.7}
-#shop .shop-links{display:flex;flex-direction:column;align-items:flex-start;gap:.7rem;min-width:210px}
-#shop .shop-links a{color:var(--ink);text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:.25rem}
-#shop .shop-links a:hover{color:var(--accent, #2a5560)}
-#shop .shop-pending{font-size:.75rem;color:var(--ink-3);letter-spacing:.02em}
-@media(max-width:700px){#shop .shop-panel{flex-direction:column;align-items:flex-start;padding:1.5rem}#shop .shop-links{min-width:0}}
